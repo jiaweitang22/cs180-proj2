@@ -429,7 +429,8 @@ p code {
 @page { size: letter; margin: .6in; }
 
 @media print {
-  :root { --paper: #fff; --ink: #111; --muted: #444; --panel: #fff; --line: #bbb; --accent: #254d99; --code-bg: #f6f6f6; --code-ink: #111; }
+  :root { color-scheme: light; --paper: #fff; --ink: #111; --muted: #444; --panel: #fff; --line: #bbb; --accent: #254d99; --code-bg: #f6f6f6; --code-ink: #111; }
+  html { background: #fff; }
   body { padding-top: 0; font-size: 11pt; background: #fff; color: #111; }
   .navbar, .toc, .theme-toggle { display: none; }
   .page {
