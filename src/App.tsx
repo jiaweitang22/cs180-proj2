@@ -302,10 +302,6 @@ export default function App() {
               <Gallery figures={[
                 ['part2_2/ioniq_input.png','Aligned Ioniq 6 input'],['part2_2/orca_input.png','Aligned orca input'],['part2_2/orca_ioniq_hybrid.png','Orca + Ioniq 6 hybrid (car low σ = 14; orca high σ = 5)'],
               ]} />
-              <h3>Davy Jones + Bill Nighy</h3><p>These portraits were already aligned on the same canvas, with compatible eye positions. I kept Davy’s color low frequencies at σ = 11 and added Bill’s grayscale high-frequency residual at σ = 4. Davy’s broad face and costume read from farther away; Bill’s glasses, hair, and wrinkles appear up close without introducing a second skin color.</p>
-              <Gallery figures={[
-                ['part2_2/davyjones_input.png','Aligned Davy Jones input'],['part2_2/bill_input.png','Aligned Bill Nighy input'],['part2_2/davyjones_bill_hybrid.png','Davy + Bill hybrid (Davy low σ = 11; Bill high σ = 4)'],
-              ]} />
               <h3>Neytiri + Zoe Saldana: full process</h3><p>This is my favorite pair. I aligned the eyes, then cropped to the common valid area so the eyes, nose, and mouth overlap. Neytiri supplies color low frequencies at σ = 14; Zoe supplies color high frequencies at σ = 4. Neytiri’s broad blue face dominates from far away, while Zoe’s eyebrows, lips, hair, and earrings emerge near the screen. A smaller low-pass σ left Neytiri’s stripes and necklace visible up close; a larger high-pass σ made Zoe noisy. Reversing the roles caused a bright necklace halo.</p>
               <h4 className="process-step"><span>01</span> Original portraits</h4>
               <Gallery columns={2} figures={[
@@ -384,21 +380,9 @@ export default function App() {
 
           <section id="lessons">
             <h1>Lessons</h1>
-            <p className="prose">
-              I never really knew how Photoshop tools like sharpen, blur, or the blending
-              brush actually worked. They felt like magic sliders: you drag them and the
-              picture changes, and I assumed the internals were something I would never need
-              to understand.
-            </p>
-            <p className="prose">
-              This project showed me those tools are just code. Unsharp masking, hybrid faces,
-              and the oraple are the same ideas as the buttons I have clicked for years,
-              written out as filters I can run myself. I also finally get why the same effect
-              sometimes looks amazing and sometimes looks like it is not working at all — it
-              depends on the pictures you start with and how you set the tool, not on whether
-              the button is broken. That is the part that stuck with me: I can open those
-              effects, rebuild them, and tell when they will land.
-            </p>
+            <p>Before this project, Photoshop tools like Sharpen, Blur, and the blending brush felt like black boxes. I dragged sliders until a picture changed and assumed I would never need to know why.</p>
+            <p>Building them showed that those tools are one idea written as code. Unsharp masking boosts a high-frequency residual. A hybrid assigns that residual to one subject and the low-pass layer to another. Multiresolution blending repeats the split at several scales so a seam can fade. Those are the effects I have used for years, now as filters I can inspect.</p>
+            <p>The part that stayed with me is that the method is only half the result. Sharpening cannot recover frequencies a blur erased, as the hawk experiment made obvious. Hybrids fail when alignment or cutoffs let both subjects read at once, or when leftover color from the low-pass layer gives the close-up away. A hard seam stays visible until the mask is smoothed at the same scales as the images. Once I could open those effects, I could also tell when they would land.</p>
           </section>
         </main>
 
