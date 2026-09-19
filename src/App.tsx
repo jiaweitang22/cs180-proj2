@@ -364,9 +364,21 @@ export default function App() {
 
           <section id="lessons">
             <h1>Lessons</h1>
-            <p>Before this project, Photoshop tools like Sharpen, Blur, and the blending brush felt like black boxes. I dragged sliders until a picture changed and assumed I would never need to know why.</p>
-            <p>Building them showed that those tools are one idea written as code. Unsharp masking boosts a high-frequency residual. A hybrid assigns that residual to one subject and the low-pass layer to another. Multiresolution blending repeats the split at several scales so a seam can fade. Those are the effects I have used for years, now as filters I can inspect.</p>
-            <p>The part that stayed with me is that the method is only half the result. Sharpening cannot recover frequencies a blur erased, as the hawk experiment made obvious. Hybrids fail when alignment or cutoffs let both subjects read at once, or when leftover color from the low-pass layer gives the close-up away. A hard seam stays visible until the mask is smoothed at the same scales as the images. Once I could open those effects, I could also tell when they would land.</p>
+            <p className="prose">
+              I never really knew how Photoshop tools like sharpen, blur, or the blending
+              brush actually worked. They felt like magic sliders: you drag them and the
+              picture changes, and I assumed the internals were something I would never need
+              to understand.
+            </p>
+            <p className="prose">
+              This project showed me those tools are just code. Unsharp masking, hybrid faces,
+              and the oraple are the same ideas as the buttons I have clicked for years,
+              written out as filters I can run myself. I also finally get why the same effect
+              sometimes looks amazing and sometimes looks like it is not working at all — it
+              depends on the pictures you start with and how you set the tool, not on whether
+              the button is broken. That is the part that stuck with me: I can open those
+              effects, rebuild them, and tell when they will land.
+            </p>
           </section>
         </main>
 
