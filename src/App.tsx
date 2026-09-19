@@ -49,11 +49,7 @@ const imageUrl = (file: string) => `${import.meta.env.BASE_URL}images/${file}`;
 const fullSizes: Record<string, [number, number]> = {
   'part1_2/threshold_sweep.png': [1736, 1166],
   'part1_3/finite_difference_vs_gaussian.png': [1257, 1328],
-  'part2_2/neytiri_zoe_frequency_analysis.png': [2215, 888],
-  'part2_3/gaussian_stacks.png': [2994, 1004],
-  'part2_3/laplacian_stacks.png': [2994, 1004],
   'part2_3/figure_3_42.png': [1233, 1686],
-  'part2_4/oraple_comparison.png': [2909, 603],
   'part2_4/kaws_basketball_process.png': [1326, 1686],
 };
 
@@ -68,6 +64,23 @@ function Gallery({ figures, columns = 3 }: { figures: Fig[]; columns?: 2 | 3 | 4
 function FullFigure({ file, label }: { file: string; label: string }) {
   const [width, height] = fullSizes[file];
   return <figure className="figure-full"><a href={imageUrl(file)} target="_blank" rel="noreferrer" aria-label={`Open full-size figure: ${label}`}><img src={imageUrl(file)} alt={label} width={width} height={height} loading="lazy" /></a><figcaption>{label} <span className="expand-hint">Click to enlarge.</span></figcaption></figure>;
+}
+
+function MontageColumns({ file, labels, width, height }: { file: string; labels: string[]; width: number; height: number }) {
+  return <div className="montage-grid">{labels.map((label, index) =>
+    <figure key={label} className="montage-card">
+      <a href={imageUrl(file)} target="_blank" rel="noreferrer" aria-label={`Open full-size montage: ${label}`}>
+        <div className="montage-viewport" style={{ aspectRatio: `${width / labels.length} / ${height}` }}>
+          <img
+            src={imageUrl(file)}
+            alt={label}
+            loading="lazy"
+            style={{ width: `${labels.length * 100}%`, transform: `translateX(-${index / labels.length * 100}%)` }}
+          />
+        </div>
+      </a>
+      <figcaption>{label}</figcaption>
+    </figure>)}</div>;
 }
 
 function CodeSlot({ label, source }: { label: string; source: string }) {
@@ -249,6 +262,10 @@ export default function App() {
               <Gallery figures={[
                 ['part2_2/motorbike_input.png','Motorcycle input'],['part2_2/bicycle_input.png','Bicycle input'],['part2_2/motorbike_bicycle_hybrid.png','Motorcycle + bicycle hybrid (low σ = 12; high σ = 4)'],
               ]} />
+              <h3>Orca + Ioniq 6</h3><p>I aligned the orca’s snout and tail with the car’s front and rear bumpers. The Ioniq supplies color low frequencies at σ = 14, retaining the car’s broad shape and waterfront tones. The grayscale orca supplies high frequencies at σ = 5; its eye, fin, and body contour become more visible up close. Keeping the orca layer grayscale avoids mixing the original water’s blue with the car’s color.</p>
+              <Gallery figures={[
+                ['part2_2/ioniq_input.png','Aligned Ioniq 6 input'],['part2_2/orca_input.png','Aligned orca input'],['part2_2/orca_ioniq_hybrid.png','Orca + Ioniq 6 hybrid (car low σ = 14; orca high σ = 5)'],
+              ]} />
               <h3>Neytiri + Zoe Saldana: full process</h3><p>This is my favorite pair. I aligned the eyes, then cropped to the common valid area so the eyes, nose, and mouth overlap. Neytiri supplies color low frequencies at σ = 14; Zoe supplies color high frequencies at σ = 4. Neytiri’s broad blue face dominates from far away, while Zoe’s eyebrows, lips, hair, and earrings emerge near the screen. A smaller low-pass σ left Neytiri’s stripes and necklace visible up close; a larger high-pass σ made Zoe noisy. Reversing the roles caused a bright necklace halo.</p>
               <Gallery columns={2} figures={[
                 ['part2_2/neytiri_original.png','Neytiri original'],['part2_2/zoe_original.png','Zoe Saldana original'],
@@ -259,15 +276,24 @@ export default function App() {
               <Gallery figures={[
                 ['part2_2/neytiri_low.png','Low-pass Neytiri, σ = 14'],['part2_2/zoe_high.png','High-pass Zoe, σ = 4 (signed display)'],['part2_2/neytiri_zoe_hybrid.png','Final Neytiri + Zoe hybrid'],
               ]} />
-              <p>The frequency view shows the aligned inputs, their filtered layers, and the final hybrid, with each centered log-magnitude Fourier transform underneath. The low-pass spectrum concentrates near the center; Zoe’s high-pass spectrum suppresses that center and retains outer frequencies. The hybrid has both. I compute each spectrum from grayscale luminance using log(|fftshift(fft2(image))| + 10⁻¹²).</p>
-              <FullFigure file="part2_2/neytiri_zoe_frequency_analysis.png" label="Full hybrid process: aligned Neytiri and Zoe, filtered layers, final hybrid, and five corresponding FFT spectra" />
+              <p>The frequency view shows the aligned inputs, their filtered layers, and the final hybrid, with each centered log-magnitude Fourier transform underneath. The low-pass spectrum concentrates near the center; Zoe’s high-pass spectrum suppresses that center and retains outer frequencies. The hybrid has both. I compute each spectrum from grayscale luminance using log(|fftshift(fft2(image))| + 10⁻¹²). Each panel below pairs an image (top) with its spectrum (bottom); click a panel for the complete figure.</p>
+              <MontageColumns file="part2_2/neytiri_zoe_frequency_analysis.png" width={2215} height={888} labels={[
+                'Aligned Neytiri and FFT', 'Aligned Zoe and FFT', 'Neytiri low-pass and FFT', 'Zoe high-pass and FFT', 'Hybrid and FFT',
+              ]} />
             </section>
 
             <section id="gaussian-and-laplacian-stacks">
               <h2>Gaussian and Laplacian Stacks</h2>
               <p>I made six Gaussian levels for each apple and orange by repeatedly blurring without downsampling, so every level stays the original size. My base σ is 4, and later blur scales double. Each Laplacian level is Lᵢ = Gᵢ − Gᵢ₊₁; the final level keeps the coarsest Gaussian residual. Summing the Laplacian stack reconstructs the original (maximum error 1.11×10⁻¹⁶ in my notebook).</p>
-              <FullFigure file="part2_3/gaussian_stacks.png" label="Six-level Gaussian stacks: apple G₀–G₅ and orange G₀–G₅, all at the same resolution" />
-              <FullFigure file="part2_3/laplacian_stacks.png" label="Six-level Laplacian stacks: apple L₀–L₅ and orange L₀–L₅; L₅ is the coarse residual" />
+              <p>Each panel pairs the apple (top) and orange (bottom) at one level. The larger panels make the progressive blur and the signed detail bands easier to compare; click one to open the complete stack.</p>
+              <h3>Gaussian levels</h3>
+              <MontageColumns file="part2_3/gaussian_stacks.png" width={2994} height={1004} labels={[
+                'Apple and orange, G₀', 'Apple and orange, G₁', 'Apple and orange, G₂', 'Apple and orange, G₃', 'Apple and orange, G₄', 'Apple and orange, G₅',
+              ]} />
+              <h3>Laplacian levels</h3>
+              <MontageColumns file="part2_3/laplacian_stacks.png" width={2994} height={1004} labels={[
+                'Apple and orange, L₀', 'Apple and orange, L₁', 'Apple and orange, L₂', 'Apple and orange, L₃', 'Apple and orange, L₄', 'Apple and orange, L₅ (coarse residual)',
+              ]} />
               <p>I recreated Szeliski Figure 3.42 (a)–(l) with a vertical apple/orange mask. In each of the first three rows, the columns are masked apple detail, masked orange detail, and their sum, at high (a–c), middle (d–f), and low (g–i) bands. The bottom row shows the collapsed apple contribution (j), orange contribution (k), and complete oraple (l). Signed bands are shifted around mid-gray for display; the final row is the reconstruction.</p>
               <FullFigure file="part2_3/figure_3_42.png" label="Recreation of Szeliski Figure 3.42 (a)–(l): apple and orange frequency contributions and reconstructed oraple" />
             </section>
@@ -276,17 +302,31 @@ export default function App() {
               <h2>Multiresolution Blending (a.k.a. the oraple!)</h2>
               <p>I use a Gaussian stack of the mask alongside Laplacian stacks of both inputs. At level i, L<sub>blend,i</sub> = G<sub>mask,i</sub>L<sub>A,i</sub> + (1 − G<sub>mask,i</sub>)L<sub>B,i</sub>. Summing the blended levels gives the image. Blurring the mask at coarser scales spreads low-frequency transitions while retaining finer local detail near the seam.</p>
               <h3>Apple + orange</h3><p>A vertical step mask selects the apple on the left and orange on the right. The direct cut exposes a hard center seam; the six-level stack blend (base σ = 4) softens the transition. This is the oraple from the Figure 3.42 reconstruction above.</p>
-              <FullFigure file="part2_4/oraple_comparison.png" label="Apple, orange, vertical mask, hard cut, and multiresolution oraple" />
+              <MontageColumns file="part2_4/oraple_comparison.png" width={2909} height={603} labels={[
+                'Apple input', 'Orange input', 'Vertical mask', 'Hard cut with visible seam', 'Multiresolution oraple',
+              ]} />
               <h3>Custom blend 1: Lime + lemon</h3><p>I centered and scaled the circular fruit to a common 640×640 canvas, then used a vertical step softened with σ = 28 before making seven stack levels (base σ = 8). The wide transition smooths the change from green to yellow pulp; the hard-cut comparison makes the seam visible.</p>
               <Gallery figures={[
                 ['part2_4/lime.png','Aligned lime'],['part2_4/lemon.png','Aligned lemon'],['part2_4/lime_lemon_mask.png','Softened vertical mask'],['part2_4/lime_lemon_hard.png','Lime + lemon hard cut'],['part2_4/lime_lemon.png','Lime + lemon multiresolution blend'],
               ]} />
-              <h3>Custom blend 2: KAWS + basketball (irregular mask)</h3><p>For my favorite blend, I resized the basketball to replace the sphere held by KAWS and placed it on the same canvas. A circular mask centered at (500, 426) with radius 165 selects the ball. This mask is irregular relative to the straight seams above. The six-level stack (base σ = 4) keeps the ball’s markings while easing its rim into the hands; the hard composite retains a sharper pasted edge.</p>
+              <h3>Custom blend 2: Blue + red gummy bear</h3><p>I aligned the two gummies by their bounding boxes, then combined the blue top and red bottom with a horizontal step mask softened at σ = 8. Five stack levels with base σ = 4 smooth the color transition through the bear’s torso. The hard cut makes the midline more obvious; a much wider transition would bleed color into the white background.</p>
+              <Gallery figures={[
+                ['part2_4/blue_gummy.png','Aligned blue gummy'],['part2_4/red_gummy.png','Aligned red gummy'],['part2_4/gummy_mask.png','Softened horizontal mask'],['part2_4/gummy_hard.png','Blue + red hard cut'],['part2_4/gummy.png','Blue + red multiresolution blend'],
+              ]} />
+              <h3>Custom blend 3: Oreo flavor packages</h3><p>The Banana Pudding and Chicken &amp; Waffles packages were already registered, so I reduced each to a 900-pixel maximum side before blending. A vertical mask softened at σ = 12 selects banana on the left and chicken on the right. Six stack levels with base σ = 5 preserve the Oreo logo and central cookie while softening the abrupt change between the yellow and brown package backgrounds.</p>
+              <Gallery columns={2} figures={[
+                ['part2_4/oreo_banana.png','Banana Pudding Oreo input'],['part2_4/oreo_chicken.png','Chicken & Waffles Oreo input'],['part2_4/oreo_mask.png','Softened vertical mask'],['part2_4/oreo_hard.png','Oreo hard cut'],['part2_4/oreo.png','Multiresolution Oreo blend'],
+              ]} />
+              <h3>Custom blend 4: KAWS + basketball (irregular mask)</h3><p>For my favorite blend, I resized the basketball to replace the sphere held by KAWS and placed it on the same canvas. A circular mask centered at (500, 426) with radius 165 selects the ball. This mask is irregular relative to the straight seams above. The six-level stack (base σ = 4) keeps the ball’s markings while easing its rim into the hands; the hard composite retains a sharper pasted edge.</p>
               <Gallery figures={[
                 ['part2_4/kaws_input.png','KAWS original'],['part2_4/basketball_placed.png','Basketball positioned over the sphere'],['part2_4/kaws_basketball_mask.png','Circular selection mask'],['part2_4/kaws_basketball_hard.png','Hard composite'],['part2_4/kaws_basketball.png','Multiresolution KAWS + basketball'],
               ]} />
               <p>The process view shows masked basketball, masked KAWS, and their combined Laplacian contributions at high, middle, and low bands. The last row collapses each input’s contribution and shows the finished image. This makes the circular mask’s role visible at every scale.</p>
               <FullFigure file="part2_4/kaws_basketball_process.png" label="Favorite blend process: masked input contributions, combined Laplacian bands, and final KAWS + basketball result" />
+              <h3>Custom blend 5: LeBron + GOAT (silhouette mask)</h3><p>I placed the goat’s head over LeBron’s with the same similarity transform for the goat photo and its matching silhouette mask (scale 0.58; target center (434, 346)). The mask follows the horns, ears, and muzzle, selecting only the head rather than the rectangular source photo. I softened its edge with σ = 2 and used six stack levels with base σ = 4. The hard composite leaves a visible cutout edge; the multiresolution blend eases the goat into the dark background while preserving the jersey and arms.</p>
+              <Gallery columns={2} figures={[
+                ['part2_4/lebron.png','LeBron original'],['part2_4/goat_input.png','Goat source'],['part2_4/lebron_goat_mask.png','Irregular goat-head silhouette mask'],['part2_4/lebron_goat_hard.png','Aligned goat, hard silhouette composite'],['part2_4/lebron_goat.png','Multiresolution LeBron + GOAT blend'],
+              ]} />
             </section>
           </section>
 

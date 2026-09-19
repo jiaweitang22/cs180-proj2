@@ -214,6 +214,7 @@ p code {
   background: #f8f9fa;
   border: 1px solid var(--line);
 }
+.figure-grid.cols-2 .figure-card img { height: 300px; }
 .figure-card figcaption, .figure-full figcaption {
   padding-top: 7px;
   color: var(--muted);
@@ -223,6 +224,34 @@ p code {
 .figure-full { margin: 22px 0 30px; }
 .figure-full img { border: 1px solid var(--line); width: 100%; height: auto; }
 .expand-hint { white-space: nowrap; }
+.montage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 16px;
+  margin: 20px 0 30px;
+}
+.montage-card { min-width: 0; }
+.montage-card a { display: block; }
+.montage-viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  background: #f8f9fa;
+  border: 1px solid var(--line);
+}
+.montage-viewport img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  height: auto;
+}
+.montage-card figcaption {
+  padding-top: 7px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
 .equation {
   margin: 16px 0 20px;
   padding: 14px 18px;
@@ -240,13 +269,17 @@ p code {
 }
 
 @media (max-width: 600px) {
+  .figure-grid.cols-2 { grid-template-columns: 1fr; }
   .figure-grid.cols-3, .figure-grid.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .montage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .figure-card img { height: 165px; }
+  .figure-grid.cols-2 .figure-card img { height: auto; max-height: 400px; }
   .title, .content section h1 { font-size: 29px; }
 }
 
 @media (max-width: 400px) {
   .figure-grid { grid-template-columns: 1fr !important; }
+  .montage-grid { grid-template-columns: 1fr; }
   .figure-card img { height: auto; max-height: 300px; }
 }
 
