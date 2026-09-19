@@ -130,6 +130,12 @@ h1, h2, h3, p, figure, ul, pre { margin: 0; }
   font-style: italic;
 }
 
+.content p {
+  margin-bottom: 16px;
+  font-size: 15.3px;
+  line-height: 1.55;
+}
+
 .figure { margin: 20px 0 28px; }
 .figure figcaption {
   padding-top: 6px;
