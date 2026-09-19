@@ -364,21 +364,7 @@ export default function App() {
 
           <section id="lessons">
             <h1>Lessons</h1>
-            <p className="prose">
-              I never really knew how Photoshop tools like sharpen, blur, or the blending
-              brush actually worked. They felt like magic sliders: you drag them and the
-              picture changes, and I assumed the internals were something I would never need
-              to understand.
-            </p>
-            <p className="prose">
-              This project showed me those tools are just code. Unsharp masking, hybrid faces,
-              and the oraple are the same ideas as the buttons I have clicked for years,
-              written out as filters I can run myself. I also finally get why the same effect
-              sometimes looks amazing and sometimes looks like it is not working at all — it
-              depends on the pictures you start with and how you set the tool, not on whether
-              the button is broken. That is the part that stuck with me: I can open those
-              effects, rebuild them, and tell when they will land.
-            </p>
+            <p>Before this project, I assumed that effects like these were far beyond what I could ever do, the kind of thing that required advanced Photoshop skills. Building each piece myself changed that. I learned that images can be split into different levels of detail, from fine edges and texture to smooth color, and that blending those levels separately is what makes the seam between two images disappear. Comparing my results to a simple hard cut made the difference obvious. I also learned that getting a good result takes patience, since every pair of images needed its own tuning and careful alignment. I'm impressed by how far I've come, and I now see how much creative control code gives me over complex visual results.</p>
           </section>
         </main>
 
