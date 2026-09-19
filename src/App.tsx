@@ -191,7 +191,7 @@ export default function App() {
 
             <section id="convolutions-from-scratch">
               <h2>Convolutions from Scratch</h2>
-              <p>I implemented convolution twice using NumPy alone. Both versions flip the kernel and explicitly zero-pad the image for <code>same</code> or <code>full</code> output. The first uses four loops over output pixels and kernel entries; the second keeps only the output loops and lets NumPy multiply and sum each patch. These are the exact Part 1.1 implementations from my notebook.</p>
+              <p>Convolution makes each output pixel by multiplying its neighboring pixels by a filter and summing the products. I implemented it twice using NumPy alone. Both versions flip the kernel and explicitly zero-pad the image for <code>same</code> or <code>full</code> output. The first uses four loops over output pixels and kernel entries; the second keeps only the output loops and lets NumPy multiply and sum each patch. These are the exact Part 1.1 implementations from my notebook.</p>
               <CodeSlot label="Four-loop convolution" source={fourLoopCode} />
               <CodeSlot label="Two-loop convolution" source={twoLoopCode} />
               <p>I checked both modes against <code>scipy.signal.convolve2d</code> using a nonsymmetric 2×3 kernel. The maximum error was 8.88×10⁻¹⁶ in both modes, which also verifies the kernel flip. For a seeded 128×128 image with a 9×9 box kernel, I measured:</p>
@@ -206,7 +206,7 @@ export default function App() {
 
             <section id="finite-difference-operator">
               <h2>Finite Difference Operator</h2>
-              <p>On the cameraman, I wanted a single map of edge strength rather than two signed derivative views. I combined the horizontal and vertical responses by their Euclidean magnitude, then thresholded that magnitude. I cropped the supplied image’s uniform white matte and used symmetric boundary extension so the matte and a zero-filled frame would not become false edges.</p>
+              <p>The finite-difference filters measure brightness changes across columns and rows. Their signed responses show the direction of each change; combining them by Euclidean magnitude gives one map of edge strength. I thresholded that map to keep stronger edges. I cropped the cameraman image’s uniform white matte and used symmetric boundary extension so the matte and a zero-filled frame would not become false edges.</p>
               <Gallery figures={[
                 ['part1_2/cameraman.png','Cameraman after removing the white matte'],['part1_2/Ix.png','Partial derivative Iₓ'],['part1_2/Iy.png','Partial derivative Iᵧ'],['part1_2/gradient_magnitude.png','Gradient magnitude (normalized for display)'],['part1_2/edges_threshold_0.24.png','Binarized edges, threshold 0.24'],
               ]} />
@@ -216,7 +216,7 @@ export default function App() {
 
             <section id="derivative-of-gaussian-dog-filter">
               <h2>Derivative of Gaussian (DoG) Filter</h2>
-              <p>The finite differences still respond to grass and clothing texture. I tested whether smoothing before differentiation would quiet those responses. I formed a normalized 9×9 Gaussian with σ = 1.5 by taking the outer product of <code>cv2.getGaussianKernel(9, 1.5)</code> with itself, then convolved that Gaussian with each finite-difference filter to get the two DoG kernels.</p>
+              <p>A Gaussian blur averages nearby pixels, reducing small intensity changes before the derivative filters turn them into edges. I tested whether this would quiet the finite differences’ response to grass and clothing texture. I formed a normalized 9×9 Gaussian with σ = 1.5 by taking the outer product of <code>cv2.getGaussianKernel(9, 1.5)</code> with itself, then convolved that Gaussian with each finite-difference filter to get the two DoG kernels.</p>
               <Gallery figures={[
                 ['part1_3/gaussian_kernel.png','Gaussian kernel G, 9×9, σ = 1.5'],['part1_3/dog_dx.png','DoG kernel G ∗ Dₓ'],['part1_3/dog_dy.png','DoG kernel G ∗ Dᵧ'],
               ]} />
@@ -241,7 +241,7 @@ export default function App() {
               <h2>Image “Sharpening”</h2>
               <p>I blurred an image, subtracted the blur to isolate its high-frequency residual, and added a scaled copy of that residual back:</p>
               <Math display tex="f_{\mathrm{sharp}}=f+\alpha\,(f-f\ast g)" />
-              <p>Here α controls how much detail is added. The same idea is one convolution per channel. My single-convolution and explicit two-step Taj results differed by at most 1.33×10⁻¹⁵. This method strengthens existing local contrast; it cannot invent detail erased by blur.</p>
+              <p>Here α controls how much detail is added. Combining the original image and the blur into one unsharp-mask filter makes this one convolution per channel. My single-convolution and explicit two-step Taj results differed by at most 1.33×10⁻¹⁵. This method strengthens existing local contrast; it cannot invent detail erased by blur.</p>
               <h3>Taj Mahal</h3><p>I used a 9×9 Gaussian with σ = 1.5. In the signed high-frequency display, mid-gray is zero, white is positive, and black is negative. I chose α = 2 for the main result: facade patterns, arches, trees, and the dome become clearer without the stronger halos of larger values.</p>
               <Gallery columns={4} figures={[
                 ['part2_1/taj_original.png','Original Taj Mahal'],['part2_1/taj_blurred.png','Gaussian blur, σ = 1.5'],['part2_1/taj_high_frequency.png','High-frequency residual (signed display)'],['part2_1/taj_sharpened_alpha_2.png','Sharpened Taj, α = 2'],
@@ -279,7 +279,8 @@ export default function App() {
 
             <section id="hybrid-images">
               <h2>Hybrid Images</h2>
-              <p>I aligned corresponding features, blurred one image for its low-frequency layer, and added the second image’s high-frequency residual (original minus its Gaussian blur). Up close, the detail layer is prominent. From farther away, its fine structure fades and the low-pass subject takes over. I adjusted cutoffs to avoid seeing both subjects at once or making the high-pass layer harsh.</p>
+              <p>Low frequencies carry broad shapes and gradual color changes; high frequencies carry fine edges and texture. At a distance, the eye loses those fine details, so the broad shape becomes easier to see. A hybrid image uses this change in perception to show one subject up close and another from far away.</p>
+              <p>To make each hybrid, I aligned corresponding features, blurred one image with a Gaussian for its low-frequency layer, and added the second image’s high-frequency residual (the original minus its Gaussian blur). The two Gaussian σ values set how much detail each subject contributes. I adjusted them so the near subject has recognizable edges while the far subject remains visible after the fine detail fades.</p>
               <h3>Derek + Nutmeg</h3><p>I aligned the eyes and used grayscale for both images. Derek is the low-pass subject with σ = 14; Nutmeg is the high-pass subject with σ = 4. Grayscale prevents Derek’s skin and shirt color from making the close-up look like a person even when Nutmeg’s edges are visible.</p>
               <Gallery figures={[
                 ['part2_2/derek_original.png','Derek original'],['part2_2/nutmeg_original.png','Nutmeg original'],['part2_2/derek_nutmeg_hybrid.png','Derek + Nutmeg hybrid (low σ = 14; high σ = 4)'],
@@ -314,7 +315,7 @@ export default function App() {
 
             <section id="gaussian-and-laplacian-stacks">
               <h2>Gaussian and Laplacian Stacks</h2>
-              <p>For blending, I needed detail at more than one scale. I made six Gaussian levels for each apple and orange by repeatedly blurring without downsampling, so every level stays the original size. My base σ is 4, and later blur scales double. Subtracting adjacent Gaussian levels isolates the detail bands; the last level is the coarsest residual. Summing the Laplacian stack reconstructs the original; the maximum error in my notebook was 1.11×10⁻¹⁶.</p>
+              <p>A Gaussian stack shows an image at successively smoother scales. Subtracting each blurred level from the preceding one creates a Laplacian stack of detail bands; the final level keeps the broadest color and shape. I made six Gaussian levels for each apple and orange by repeatedly blurring without downsampling, so every level stays the original size. My base σ is 4, and later blur scales double. Summing the Laplacian stack reconstructs the original; the maximum error in my notebook was 1.11×10⁻¹⁶.</p>
               <p>Each panel pairs the apple (top) and orange (bottom) at one level. The larger panels make the progressive blur and the signed detail bands easier to compare; click one to open the complete stack.</p>
               <h3>Gaussian levels</h3>
               <MontageColumns file="part2_3/gaussian_stacks.png" width={2994} height={1004} labels={[
@@ -330,7 +331,7 @@ export default function App() {
 
             <section id="multiresolution-blending">
               <h2>Multiresolution Blending (a.k.a. the oraple!)</h2>
-              <p>A hard cut chooses one source on each side of a seam. I wanted the choice to change gradually with scale, so I built a Gaussian stack of the mask alongside Laplacian stacks of both inputs. At each level I blend the two detail bands with that level’s blurred mask, then sum the bands. The coarse mask levels spread the low-frequency transition; finer bands keep local detail near the seam.</p>
+              <p>A hard cut chooses one source on each side of a seam. Multiresolution blending makes that choice separately for fine details and broad color changes. I built a Gaussian stack of the mask alongside Laplacian stacks of both inputs. At each level I use the mask as a weight between the two detail bands, then sum the bands. Coarse mask levels spread the color transition across a wider area; finer bands keep local texture near the seam.</p>
               <h3>Apple + orange</h3><p>I began with a vertical step mask: apple on the left, orange on the right. I used the same inputs for a direct cut and a six-level stack blend with base σ = 4, so the difference would come from the blending method.</p>
               <MontageColumns file="part2_4/oraple_comparison.png" width={2909} height={603} labels={[
                 'Apple input', 'Orange input', 'Vertical mask', 'Hard cut with visible seam', 'Multiresolution oraple',
