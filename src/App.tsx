@@ -355,7 +355,7 @@ export default function App() {
               <p>The process view shows masked basketball, masked KAWS, and their combined Laplacian contributions at high, middle, and low bands. The last row collapses each input’s contribution and shows the finished image. This makes the circular mask’s role visible at every scale.</p>
               <FullFigure file="part2_4/kaws_basketball_process.png" label="Favorite blend process: masked input contributions, combined Laplacian bands, and final KAWS + basketball result" />
               <Finding label="Why I kept this result">The hard composite preserves a pasted rim around the ball. Across the six stack levels, the mask eases that rim into the hands while the basketball markings remain visible. The process figure shows which source contributes at each scale.</Finding>
-              <h3>Custom blend 5: LeBron + GOAT (silhouette mask)</h3><p>I placed the goat’s head over LeBron’s with the same similarity transform for the goat photo and its matching silhouette mask (scale 0.58; target center (434, 346)). The mask follows the horns, ears, and muzzle, selecting only the head rather than the rectangular source photo. I softened its edge with σ = 2 and used six stack levels with base σ = 4. The hard composite leaves a visible cutout edge; the multiresolution blend eases the goat into the dark background while preserving the jersey and arms.</p>
+              <h3>Custom blend 5: LeBron + GOAT (silhouette mask)</h3><p>I placed the goat’s head over LeBron’s with the same similarity transform for the goat photo and its matching silhouette mask (scale 0.58; target center (434, 346)). The mask follows the horns, ears, and muzzle, selecting only the head rather than the rectangular source photo. I softened its edge with σ = 4 and used six stack levels with base σ = 4. The hard composite leaves a visible cutout edge; the multiresolution blend eases the goat into the dark background while preserving the jersey and arms.</p>
               <Gallery columns={2} figures={[
                 ['part2_4/lebron.png','LeBron original'],['part2_4/goat_input.png','Goat source'],['part2_4/lebron_goat_mask.png','Irregular goat-head silhouette mask'],['part2_4/lebron_goat_hard.png','Aligned goat, hard silhouette composite'],['part2_4/lebron_goat.png','Multiresolution LeBron + GOAT blend'],
               ]} />
@@ -364,21 +364,9 @@ export default function App() {
 
           <section id="lessons">
             <h1>Lessons</h1>
-            <p className="prose">
-              I never really knew how Photoshop tools like sharpen, blur, or the blending
-              brush actually worked. They felt like magic sliders: you drag them and the
-              picture changes, and I assumed the internals were something I would never need
-              to understand.
-            </p>
-            <p className="prose">
-              This project showed me those tools are just code. Unsharp masking, hybrid faces,
-              and the oraple are the same ideas as the buttons I have clicked for years,
-              written out as filters I can run myself. I also finally get why the same effect
-              sometimes looks amazing and sometimes looks like it is not working at all — it
-              depends on the pictures you start with and how you set the tool, not on whether
-              the button is broken. That is the part that stuck with me: I can open those
-              effects, rebuild them, and tell when they will land.
-            </p>
+            <p>Before this project, Photoshop tools like Sharpen, Blur, and the blending brush felt like black boxes. I dragged sliders until a picture changed and assumed I would never need to know why.</p>
+            <p>Building them showed that those tools are one idea written as code. Unsharp masking boosts a high-frequency residual. A hybrid assigns that residual to one subject and the low-pass layer to another. Multiresolution blending repeats the split at several scales so a seam can fade. Those are the effects I have used for years, now as filters I can inspect.</p>
+            <p>The part that stayed with me is that the method is only half the result. Sharpening cannot recover frequencies a blur erased, as the hawk experiment made obvious. Hybrids fail when alignment or cutoffs let both subjects read at once, or when leftover color from the low-pass layer gives the close-up away. A hard seam stays visible until the mask is smoothed at the same scales as the images. Once I could open those effects, I could also tell when they would land.</p>
           </section>
         </main>
 
