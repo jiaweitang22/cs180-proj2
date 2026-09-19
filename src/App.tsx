@@ -266,6 +266,10 @@ export default function App() {
               <Gallery figures={[
                 ['part2_2/ioniq_input.png','Aligned Ioniq 6 input'],['part2_2/orca_input.png','Aligned orca input'],['part2_2/orca_ioniq_hybrid.png','Orca + Ioniq 6 hybrid (car low σ = 14; orca high σ = 5)'],
               ]} />
+              <h3>Davy Jones + Bill Nighy</h3><p>These portraits were already aligned on the same canvas, with compatible eye positions. I kept Davy’s color low frequencies at σ = 11 and added Bill’s grayscale high-frequency residual at σ = 4. Davy’s broad face and costume read from farther away; Bill’s glasses, hair, and wrinkles appear up close without introducing a second skin color.</p>
+              <Gallery figures={[
+                ['part2_2/davyjones_input.png','Aligned Davy Jones input'],['part2_2/bill_input.png','Aligned Bill Nighy input'],['part2_2/davyjones_bill_hybrid.png','Davy + Bill hybrid (Davy low σ = 11; Bill high σ = 4)'],
+              ]} />
               <h3>Neytiri + Zoe Saldana: full process</h3><p>This is my favorite pair. I aligned the eyes, then cropped to the common valid area so the eyes, nose, and mouth overlap. Neytiri supplies color low frequencies at σ = 14; Zoe supplies color high frequencies at σ = 4. Neytiri’s broad blue face dominates from far away, while Zoe’s eyebrows, lips, hair, and earrings emerge near the screen. A smaller low-pass σ left Neytiri’s stripes and necklace visible up close; a larger high-pass σ made Zoe noisy. Reversing the roles caused a bright necklace halo.</p>
               <Gallery columns={2} figures={[
                 ['part2_2/neytiri_original.png','Neytiri original'],['part2_2/zoe_original.png','Zoe Saldana original'],
