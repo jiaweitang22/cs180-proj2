@@ -440,4 +440,8 @@ p code {
   }
   .content h1, .content h2, .content h3 { break-after: avoid; }
   .figure, .figure-card, .figure-full, .source-code, .math-block, .finding { break-inside: avoid; }
+  .figure-full img { width: auto; max-width: 100%; max-height: 8.4in; margin-inline: auto; }
+  #lessons { break-inside: avoid; }
+  #lessons h1 { margin: 24px 0 16px; }
+  #lessons p { font-size: 14px; line-height: 1.5; }
 }
