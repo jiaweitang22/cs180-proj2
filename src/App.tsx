@@ -149,15 +149,18 @@ export default function App() {
 
   return (
     <>
-      <nav className="navbar">
+      <nav className="navbar" aria-label="Projects">
         <div className="navbar-inner">
-          <a className="brand" href="#top">
+          <a className="brand" href="https://jiaweitang22.github.io/">
             Jiawei Tang
           </a>
           <div className="navbar-links">
-            <a className="nav-link active" href="#top">
-              CS 180 Project 2
-            </a>
+            <a className="nav-link" href="https://jiaweitang22.github.io/">Home</a>
+            <a className="nav-link" href="https://jiaweitang22.github.io/cs180-proj0/">Project 0</a>
+            <a className="nav-link" href="https://jiaweitang22.github.io/cs180-proj1/">Project 1</a>
+            <a className="nav-link active" href="https://jiaweitang22.github.io/cs180-proj2/" aria-current="page">Project 2</a>
+            <a className="nav-link" href="https://jiaweitang22.github.io/cs180-proj3/">Project 3</a>
+            <a className="nav-link" href="https://jiaweitang22.github.io/cs180-proj4/">Project 4</a>
           </div>
           <button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
             <span aria-hidden="true">{theme === 'dark' ? '☀' : '☾'}</span> {theme === 'dark' ? 'Light' : 'Dark'} mode

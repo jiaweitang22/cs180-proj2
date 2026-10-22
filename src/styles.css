@@ -37,7 +37,7 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  padding: 62px 0 0;
+  padding: 0;
   background: var(--paper);
   color: var(--ink);
   font-family: "Source Sans Pro", -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -51,10 +51,10 @@ h1, h2, h3, h4, p, figure, ul, pre { margin: 0; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .navbar {
-  position: fixed;
-  inset: 0 0 auto;
+  position: sticky;
+  top: 0;
   z-index: 20;
-  height: 62px;
+  min-height: 62px;
   background: var(--nav);
   color: var(--nav-ink);
   border-bottom: 1px solid var(--line);
@@ -66,7 +66,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   align-items: center;
   gap: 8px;
   width: min(1100px, calc(100% - 48px));
-  height: 100%;
+  min-height: 62px;
+  flex-wrap: wrap;
+  padding-block: 10px;
   margin-inline: auto;
 }
 
@@ -78,7 +80,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   white-space: nowrap;
 }
 
-.navbar-links { display: flex; align-items: center; }
+.navbar-links { display: flex; flex-wrap: wrap; align-items: center; }
 .nav-link {
   padding: 8px 10px;
   color: var(--nav-ink);
@@ -405,7 +407,7 @@ p code {
 }
 
 @media (max-width: 600px) {
-  .navbar-links { display: none; }
+  .navbar-links { display: flex; order: 3; flex-basis: 100%; }
   .title-block { padding: 24px 22px; }
   .title-block .title-lede { font-size: 16px; }
   .figure-grid.cols-2 { grid-template-columns: 1fr; }
